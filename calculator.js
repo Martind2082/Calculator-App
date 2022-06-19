@@ -98,6 +98,11 @@ const checkLength = x => {
 let answer;
 document.getElementById('equal').onclick = function() {
     pushed = [];
+    if (array2.length === 0) {
+        mouth.textContent = array1.join('');
+        resetArrays();
+        return;
+    }
     array1 = array1.join('');
     array1 = parseFloat(array1);
     array2 = array2.join('');
