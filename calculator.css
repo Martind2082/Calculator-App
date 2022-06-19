@@ -71,6 +71,7 @@ body {
     display: flex;
     align-items: center;
     font-size: 3.3rem;
+    overflow-x: scroll;
 }
 #arms {
     position: absolute;

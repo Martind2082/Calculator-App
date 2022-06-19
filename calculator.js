@@ -2,20 +2,12 @@ let mouth = document.getElementById('mouth');
 let operators = ['+', '-', '×', '÷'];
 let status = true;
 
-let pushed=[];
-let array1=[];
-let array2=[];
+let pushed= [];
+let array = [];
+let r = /[+\-÷×]/;
 
-function resetArrays() {
-    array1 = [];
-    array2 = [];
-    already = false;
-}
 
-//already typed in an operator
-let already = false;
-let operator;
-
+//if robot is sleeping, user can't type
 document.querySelectorAll('.button').forEach(val => {
     val.onclick = function() {
         if (status === false) {
@@ -31,12 +23,16 @@ document.querySelectorAll('.button').forEach(val => {
     }
 })
 
+let operator = false;
 document.querySelectorAll('.number').forEach(val => {
     val.addEventListener('click', (e) => {
         if (status === false) {
             return;
         }
-        if (mouth.textContent.length === 10) {
+        let marray = mouth.textContent.split('');
+        let bad = marray.length - 10;
+        if (mouth.textContent.length === 10 && (marray.includes('+') === false || marray.includes('-') === false || marray.includes('÷') === false || marray.includes('×') === false)) {
+            console.log('is true');
             let div = document.createElement('div');
             div.textContent = 'Max capacity reached';
             div.classList.add('max');
@@ -46,15 +42,21 @@ document.querySelectorAll('.number').forEach(val => {
             }, 4000);
             return;
         }
-        if (already === true) {
-            pushed.push(e.target.id[1]);
-            mouth.textContent = pushed.join('');
-            array2.push(e.target.id[1]);
-            return;
+        if (r.test(marray[bad])) {
+            console.log('is true');
+            let div = document.createElement('div');
+            div.textContent = 'Max capacity reached';
+            div.classList.add('max');
+            document.body.append(div);
+            setTimeout(() => {
+                div.remove();
+            }, 4000);
+            return;   
         }
+
         pushed.push(e.target.id[1]);
         mouth.textContent = pushed.join('');
-        array1.push(e.target.id[1]);
+        array.push(e.target.id[1]);
     })
 });
 
@@ -63,28 +65,23 @@ document.querySelectorAll('.operator').forEach(val => {
         if (status === false) {
             return;
         }
-        if (mouth.textContent.length === 10) {
-            let div = document.createElement('div');
-            div.textContent = 'Max capacity reached';
-            div.classList.add('max');
-            document.body.append(div);
-            setTimeout(() => {
-                div.remove();
-            }, 4000);
+        let marray = mouth.textContent.split('');
+        let last = mouth.textContent.length - 1;
+        if (r.test(marray[last]) === true) {
             return;
         }
         pushed.push(e.target.id[1]);
         mouth.textContent = pushed.join('');
-        already = true;
-        operator = e.target.id[2];
+        array.push(e.target.id[2]);
+        operator = true;
     })
 })
 
 document.getElementById('ce').onclick = function() {
     mouth.textContent = '';
-    resetArrays();
+    array = [];
     pushed = [];
-    already = false;
+    operator = false;
 }
 
 const checkLength = x => {
@@ -95,50 +92,20 @@ const checkLength = x => {
     }
     return x.join('');
 }
-let answer;
+
+
 document.getElementById('equal').onclick = function() {
-    pushed = [];
-    if (array2.length === 0) {
-        mouth.textContent = array1.join('');
-        resetArrays();
-        return;
-    }
-    array1 = array1.join('');
-    array1 = parseFloat(array1);
-    array2 = array2.join('');
-    array2 = parseFloat(array2);
-    console.log(array1, array2);
-    switch (operator) {
-        case 'd':
-            answer = array1 / array2;
-            mouth.textContent = checkLength(answer);
-            answer = '';
-            resetArrays();
-            return;
-        case 'm':
-            answer = array1 * array2;
-            mouth.textContent = checkLength(answer);
-            answer = '';
-            resetArrays();
-            return;
-        case 's':
-            answer = array1 - array2;
-            mouth.textContent = checkLength(answer);
-            answer = '';
-            resetArrays();
-            return;
-        case 'a':
-            answer = array1 + array2;
-            mouth.textContent = checkLength(answer);
-            answer = '';
-            resetArrays();
-            return;
-    }
+    array = array.join('');
+    let answer = eval(array);
+    answer = checkLength(answer);
+    mouth.textContent = answer;
+    array = [answer];
+    pushed = [answer];
 }
 
 document.getElementById('sqrt').onclick = function() {
-    array1 = array1.join('');
-    let answer = Math.sqrt(array1);
+    array = array.join('');
+    let answer = Math.sqrt(array);
     answer = checkLength(answer);
     mouth.textContent = answer;
 }
