@@ -60,6 +60,13 @@ body {
     height: 13%;
     background-color: red;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+}
+#nose:hover {
+    transform: scale(1.1);
 }
 #mouth {
     position: absolute;
@@ -71,7 +78,8 @@ body {
     display: flex;
     align-items: center;
     font-size: 3.3rem;
-    overflow-x: scroll;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 #arms {
     position: absolute;

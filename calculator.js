@@ -5,7 +5,7 @@ let status = true;
 let pushed= [];
 let array = [];
 let r = /[+\-÷×]/;
-
+let maxcap = false;
 
 //if robot is sleeping, user can't type
 document.querySelectorAll('.button').forEach(val => {
@@ -20,7 +20,21 @@ document.querySelectorAll('.button').forEach(val => {
             }, 4000);
             return;
         }
+        let marray = mouth.textContent.split('');
+        let length = marray.length;
+        if (length >= 35) {
+            let div = document.createElement('div');
+            div.textContent = 'Max capacity reached';
+            div.classList.add('max');
+            document.body.append(div);
+            setTimeout(() => {
+                div.remove();
+            }, 4000);
+            maxcap = true;
+            return;
+        }
     }
+
 })
 
 let operator = false;
@@ -29,10 +43,12 @@ document.querySelectorAll('.number').forEach(val => {
         if (status === false) {
             return;
         }
+        if (maxcap === true) {
+            return;
+        }
         let marray = mouth.textContent.split('');
         let bad = marray.length - 10;
         if (mouth.textContent.length === 10 && (marray.includes('+') === false || marray.includes('-') === false || marray.includes('÷') === false || marray.includes('×') === false)) {
-            console.log('is true');
             let div = document.createElement('div');
             div.textContent = 'Max capacity reached';
             div.classList.add('max');
@@ -43,7 +59,6 @@ document.querySelectorAll('.number').forEach(val => {
             return;
         }
         if (r.test(marray[bad])) {
-            console.log('is true');
             let div = document.createElement('div');
             div.textContent = 'Max capacity reached';
             div.classList.add('max');
@@ -57,6 +72,7 @@ document.querySelectorAll('.number').forEach(val => {
         pushed.push(e.target.id[1]);
         mouth.textContent = pushed.join('');
         array.push(e.target.id[1]);
+        mouth.scrollLeft += 500;
     })
 });
 
@@ -74,6 +90,7 @@ document.querySelectorAll('.operator').forEach(val => {
         mouth.textContent = pushed.join('');
         array.push(e.target.id[2]);
         operator = true;
+        mouth.scrollLeft += 500;
     })
 })
 
@@ -95,19 +112,24 @@ const checkLength = x => {
 
 
 document.getElementById('equal').onclick = function() {
-    array = array.join('');
+    if (typeof array === "object") {
+        array = array.join('');
+    }
     let answer = eval(array);
     answer = checkLength(answer);
     mouth.textContent = answer;
-    array = [answer];
+    array = array.split('');
     pushed = [answer];
 }
 
 document.getElementById('sqrt').onclick = function() {
-    array = array.join('');
-    let answer = Math.sqrt(array);
+    let marray = mouth.textContent;
+    marray = Number(marray);
+    let answer = Math.sqrt(marray);
     answer = checkLength(answer);
     mouth.textContent = answer;
+    array = answer.split('');
+    pushed = [answer];
 }
 
 document.getElementById('off').onclick = function() {
@@ -138,4 +160,13 @@ document.getElementById('on').onclick = function() {
         div.classList.add('openeye');
         val.append(div);
     });
+}
+
+document.getElementById('nose').onclick = function() {
+    let moutharray = mouth.textContent.split('');
+    moutharray.pop();
+    moutharray = moutharray.join('');
+    mouth.textContent = moutharray;
+    array.pop();
+    pushed = [moutharray];
 }
