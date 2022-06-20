@@ -5,11 +5,13 @@ let status = true;
 let pushed= [];
 let array = [];
 let r = /[+\-÷×]/;
+let rarray = /[+\-/*]/;
 let maxcap = false;
 
 //if robot is sleeping, user can't type
 document.querySelectorAll('.button').forEach(val => {
     val.onclick = function() {
+        console.log(array);
         if (status === false) {
             let div = document.createElement('div');
             div.textContent = 'sleeping...';
@@ -83,7 +85,7 @@ document.querySelectorAll('.operator').forEach(val => {
         }
         let marray = mouth.textContent.split('');
         let last = mouth.textContent.length - 1;
-        if (r.test(marray[last]) === true) {
+        if (r.test(marray[last])) {
             return;
         }
         pushed.push(e.target.id[1]);
@@ -112,13 +114,16 @@ const checkLength = x => {
 
 
 document.getElementById('equal').onclick = function() {
+    if (rarray.test(array[array.length - 1])) {
+        return;
+    }
     if (typeof array === "object") {
         array = array.join('');
     }
     let answer = eval(array);
     answer = checkLength(answer);
     mouth.textContent = answer;
-    array = array.split('');
+    array = answer.split('');
     pushed = [answer];
 }
 
@@ -162,6 +167,7 @@ document.getElementById('on').onclick = function() {
     });
 }
 
+//erase
 document.getElementById('nose').onclick = function() {
     let moutharray = mouth.textContent.split('');
     moutharray.pop();
